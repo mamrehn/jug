@@ -37,13 +37,13 @@ Here is a one minute example. Save the following to a file called ``primes.py``:
 
     @TaskGenerator
     def is_prime(n):
-        sleep(1.)
-        for j in range(2,n-1):
+        sleep(1.0)
+        for j in range(2, n - 1):
             if (n % j) == 0:
                 return False
         return True
 
-    primes100 = [is_prime(n) for n in range(2,101)]
+    primes_100 = [is_prime(n) for n in range(2, 101)]
 
 Of course, this is only for didactical purposes, normally you would use a
 better method. Similarly, the ``sleep`` function is so that it does not run too
@@ -77,9 +77,9 @@ This will give you an ``ipython`` shell. The `primes100` variable is available,
 but it is an ugly list of `jug.Task` objects. To get the actual value, you call
 the `value` function::
 
-    In [1]: primes100 = value(primes100)
+    In [1]: primes_100 = value(primes_100)
 
-    In [2]: primes100[:10]
+    In [2]: primes_100[:10]
     Out[2]: [True, True, False, True, False, True, False, False, False, True]
 
 Testimonials
