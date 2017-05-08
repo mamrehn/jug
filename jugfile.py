@@ -5,7 +5,7 @@ from time import sleep
 def compfeats(url):
     print('Feats called: {}'.format(url))
     sleep(2)
-    return url+'feats'
+    return url + 'feats'
 
 @TaskGenerator
 def nfold(param, feats):
@@ -13,7 +13,6 @@ def nfold(param, feats):
     sleep(3)
     return param, feats
 
-imgs = ['images/img1.png','images/img2.png']
+imgs = ['images/img1.png', 'images/img2.png']
 feats = [compfeats(img) for img in imgs]
-tenfold = [nfold(param=p,feats=feats) for p in range(10)]
-
+tenfold = [nfold(param=p, feats=feats) for p in range(10)]
