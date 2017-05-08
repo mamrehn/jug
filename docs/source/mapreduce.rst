@@ -19,11 +19,11 @@ this::
     from jug import TaskGenerator
 
     @TaskGenerator
-    def double(x):
+    def double_num(x):
         return 2*x
 
     numbers = range(1024)
-    result = map(double, numbers)
+    result = map(double_num, numbers)
 
 This might work well for this problem. However, if instead of 1,024 numbers,
 you had 1 million and each computation was very fast, then this would actually
@@ -39,9 +39,9 @@ You can use ``jug.mapreduce.map`` to achieve a better result::
 
     from jug import mapreduce
 
-    result = mapreduce.map(double, numbers, map_step=32)
+    result = mapreduce.map(double_num, numbers, map_step=32)
 
-The ``map_step`` argument defines how many calls to ``double`` will be
+The ``map_step`` argument defines how many calls to ``double_num`` will be
 performed in a single Task.
 
 You can also include a reduce step::
@@ -50,12 +50,12 @@ You can also include a reduce step::
     def add(a, b):
         return a + b
 
-    final = mapreduce.map(add, double, numbers, map_step=32)
+    final = mapreduce.map(add, double_num, numbers, map_step=32)
 
 
 this is sort of equivalent to::
 
-    final = reduce(add, map(double, numbers))
+    final = reduce(add, map(double_num, numbers))
 
 except that **the order in which the reduction is done is not from left to
 right**! In fact, this only works well if the reduction function is
@@ -106,10 +106,10 @@ do the same with some very small files::
 
 The ``mapper`` function will output a dictionary of counts::
 
-    def count1(str):
+    def count1(input_str):
         from collections import defaultdict
         counts = defaultdict(int)
-        for word in str.split():
+        for word in input_str.split():
             counts[word] += 1
         return counts
 
@@ -150,10 +150,10 @@ Once that task is done, we might not care anymore about the break up into 6
 units. So, we can wrap the whole thing into a **compound task**::
 
     final_counts = CompoundTask(jug.mapreduce.mapreduce,
-                            merge_dicts,
-                            count1,
-                            inputs,
-                            map_step=1)
+                                merge_dicts,
+                                count1,
+                                inputs,
+                                map_step=1)
 
 At first, this does not do much. The status is the same::
 
@@ -187,21 +187,19 @@ We left out the imports above, but other than that, it is a fully functional exa
     import jug.mapreduce
     from jug.compound import CompoundTask
 
-    inputs = [
-            "banana apple apple banana",
-            "apple pear football",
-            "pear",
-            "banana apple apple",
-            "football banana",
-            "apple pear",
-            "waldorf salad",
-            ]
+    inputs = ["banana apple apple banana",
+              "apple pear football",
+              "pear",
+              "banana apple apple",
+              "football banana",
+              "apple pear",
+              "waldorf salad"]
 
 
-    def count1(str):
+    def count1(input_str):
         from collections import defaultdict
         counts = defaultdict(int)
-        for word in str.split():
+        for word in input_str.split():
             counts[word] += 1
         return counts
 
@@ -213,15 +211,13 @@ We left out the imports above, but other than that, it is a fully functional exa
             rhs[k] += v
         return rhs
 
-    #final_counts = jug.mapreduce.mapreduce(
-    #                        merge_dicts,
-    #                        count1,
-    #                        inputs,
-    #                        map_step=1)
+    # final_counts = jug.mapreduce.mapreduce(merge_dicts,
+    #                                        count1,
+    #                                        inputs,
+    #                                        map_step=1)
 
     final_counts = CompoundTask(jug.mapreduce.mapreduce,
-                            merge_dicts,
-                            count1,
-                            inputs,
-                            map_step=1)
-
+                                merge_dicts,
+                                count1,
+                                inputs,
+                                map_step=1)
